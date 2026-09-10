@@ -23,6 +23,7 @@ what that coverage does not reach:
 CPU only: no CUDA device and no real kernel is touched.
 """
 
+from typing import Any
 from unittest.mock import Mock, patch
 
 import pytest
@@ -206,7 +207,7 @@ _CALL_SITES = {
 }
 
 
-def _run_process_weights(call_site: str, backend: NvFp4MoeBackend) -> dict:
+def _run_process_weights(call_site: str, backend: NvFp4MoeBackend) -> dict[str, Any]:
     """Drive ``process_weights_after_loading`` and capture the converter call."""
     module, cls_name, make_layer = _CALL_SITES[call_site]
     method_cls = getattr(module, cls_name)
@@ -228,7 +229,7 @@ def _run_process_weights(call_site: str, backend: NvFp4MoeBackend) -> dict:
     ):
         method.process_weights_after_loading(layer)
 
-    return convert.call_args.kwargs
+    return dict(convert.call_args.kwargs)
 
 
 @pytest.mark.parametrize("call_site", sorted(_CALL_SITES))
